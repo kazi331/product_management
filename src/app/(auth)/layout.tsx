@@ -1,15 +1,14 @@
 "use client";
 import { useAppSelector } from "@/hooks/redux";
 import { ChildProp } from "@/types/common";
-import { isPending } from "@reduxjs/toolkit";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function PublicLayout({ children }: ChildProp) {
   const router = useRouter();
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { token } = useAppSelector((state) => state.auth);
   useEffect(() => {
-    if (!isPending && isAuthenticated) {
+    if (!!token) {
       return router.push("/");
     }
   }, []);

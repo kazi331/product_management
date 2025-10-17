@@ -1,12 +1,19 @@
 "use client";
+import { logout } from "@/features/auth/authSlice";
 import { closeSideBar, toggleSideBar } from "@/features/sidebar/sidebarSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { useIsMobile } from "@/hooks/useMobile";
 import { sidebarCollapsedWidth, sidebarExpandedWidth } from "@/lib/config";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@radix-ui/react-dropdown-menu";
 import { Files, Home, SidebarClose, SidebarOpen } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { Button } from "../ui/button";
 
 const sidebarItems = [
   { name: "Products", link: "/", icon: <Home /> },
@@ -17,13 +24,19 @@ export default function Sidebar() {
   const { isOpen } = useAppSelector((state) => state.sidebar);
   const dispatch = useAppDispatch();
   const isMobile = useIsMobile();
-  console.log({ isMobile });
+  // console.log({ isMobile });
   const pathname = usePathname();
+  const router = useRouter();
 
   //   auto close sidebar if mobile device detected
   useEffect(() => {
     if (isMobile) dispatch(closeSideBar());
   }, [isMobile]);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    router.push("/login");
+  };
 
   return (
     <nav
@@ -76,8 +89,8 @@ export default function Sidebar() {
           </Link>
         ))}
       </div>
-      {/* sidebar footer */}
 
+      {/* sidebar footer */}
       <div className="absolute bottom-4 left-0 right-0 text-2xl font-bold flex flex-col gap-2 mx-2">
         <div
           className={`flex items-center gap-3 p-2 hover:bg-gray-700 rounded ${
@@ -102,6 +115,52 @@ export default function Sidebar() {
           </div>
         </div>
       </div>
+
+      <DropdownMenu modal={false}>
+        <DropdownMenuTrigger asChild>
+          <div className="absolute bottom-4 left-0 right-0 text-2xl font-bold flex flex-col gap-2 mx-2">
+            <div
+              className={`flex items-center gap-3 p-2 hover:bg-gray-700 rounded ${
+                isOpen ? "rounded" : "rounded-full"
+              } cursor-pointer justify-start  border-l-white bg-gray-700`}
+            >
+              <img
+                data-slot="avatar-image"
+                className="aspect-square size-6"
+                alt="logo"
+                src="logo_brand.png"
+              />
+              <div
+                className={`grid flex-1 text-left text-sm leading-tight ${
+                  isOpen ? "block" : "hidden"
+                }`}
+              >
+                <span className="truncate font-medium">
+                  Kazi Shariful Islam
+                </span>
+                <span className="text-muted-foreground truncate text-xs">
+                  kazisharif.dev@gmail.com
+                </span>
+              </div>
+            </div>
+          </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          side="top"
+          align="end"
+          className="w-52 space-y-0.5 mb-2"
+        >
+          <Button className="w-full cursor-pointer bg-slate-600 hover:bg-slate-600/80">
+            Profile
+          </Button>
+          <Button
+            onClick={handleLogout}
+            className="w-full cursor-pointer bg-slate-600 hover:bg-slate-600/80"
+          >
+            Logout
+          </Button>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </nav>
   );
 }
