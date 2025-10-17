@@ -27,20 +27,20 @@ export default function Sidebar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 h-full bg-gray-800 backdrop-blur text-white overflow- z-10 transition-all ${
+      className={`fixed top-0 left-0 h-full min-h-screen bg-gray-800 backdrop-blur text-white overflow- z-10 transition-all ${
         isOpen ? sidebarExpandedWidth : sidebarCollapsedWidth
       }`}
     >
       <div className="relative">
+        {/* sidebar header */}
         <div className="py-4 w-full overflow-hidden">
-          <Link
-            href="/"
+          <span
             className={`text-2xl font-bold block px-4 ml-10 ${
               isOpen ? "block" : "invisible"
             }`}
           >
             Dashboard
-          </Link>
+          </span>
           <button
             className="absolute top-1/2 -translate-y-1/2 left-3 bg-gray-700 backdrop-blur-2xl p-2 rounded-full shadow-lg cursor-pointer"
             onClick={() => dispatch(toggleSideBar())}
@@ -53,7 +53,7 @@ export default function Sidebar() {
           </button>
         </div>
       </div>
-
+      {/* sidebar items */}
       <div
         className={`mb-8 text-2xl font-bold flex flex-col gap-2 ${
           isOpen ? "" : "mx-2"
@@ -75,6 +75,32 @@ export default function Sidebar() {
             </div>
           </Link>
         ))}
+      </div>
+      {/* sidebar footer */}
+
+      <div className="absolute bottom-4 left-0 right-0 text-2xl font-bold flex flex-col gap-2 mx-2">
+        <div
+          className={`flex items-center gap-3 p-2 hover:bg-gray-700 rounded ${
+            isOpen ? "rounded" : "rounded-full"
+          } cursor-pointer justify-start  border-l-white bg-gray-700`}
+        >
+          <img
+            data-slot="avatar-image"
+            className="aspect-square size-6"
+            alt="logo"
+            src="logo_brand.png"
+          />
+          <div
+            className={`grid flex-1 text-left text-sm leading-tight ${
+              isOpen ? "block" : "hidden"
+            }`}
+          >
+            <span className="truncate font-medium">Kazi Shariful Islam</span>
+            <span className="text-muted-foreground truncate text-xs">
+              kazisharif.dev@gmail.com
+            </span>
+          </div>
+        </div>
       </div>
     </nav>
   );

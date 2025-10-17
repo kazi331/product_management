@@ -13,8 +13,5 @@ export default function PublicLayout({ children }: ChildProp) {
       return router.push("/");
     }
   }, []);
-  if (true) {
-    return <div>Loading...</div>;
-  } else {
-  }
+  return <>{children}</>;
 }
