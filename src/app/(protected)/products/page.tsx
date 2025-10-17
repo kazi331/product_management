@@ -1,4 +1,4 @@
-export default function Page() {
+export default function Products() {
   return (
     <div>
       <h1 className="font-sans">Hello World</h1>

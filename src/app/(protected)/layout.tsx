@@ -1,0 +1,21 @@
+"use client";
+import Sidebar from "@/components/shared/Sidebar";
+import { useAppSelector } from "@/hooks/redux";
+import { collapsedMarginLeft, expandedMarginLeft } from "@/lib/config";
+import { ChildProp } from "@/types/common";
+
+export default function ProtectedLayout({ children }: ChildProp) {
+  const { isOpen } = useAppSelector((state) => state.sidebar);
+  return (
+    <div className="min-h-full">
+      <Sidebar />
+      <main
+        className={`flex-1 min-h-screen transition-all ${
+          isOpen ? expandedMarginLeft : collapsedMarginLeft
+        }`}
+      >
+        {children}
+      </main>
+    </div>
+  );
+}
