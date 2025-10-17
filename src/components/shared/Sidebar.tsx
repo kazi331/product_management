@@ -1,5 +1,5 @@
 "use client";
-import { closeSideBar, toggleSideBar } from "@/features/sidebarSlice";
+import { closeSideBar, toggleSideBar } from "@/features/sidebar/sidebarSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { useIsMobile } from "@/hooks/useMobile";
 import { sidebarCollapsedWidth, sidebarExpandedWidth } from "@/lib/config";
