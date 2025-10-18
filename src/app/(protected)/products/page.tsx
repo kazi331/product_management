@@ -11,12 +11,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { useDeleteProductMutation, useGetProductsQuery } from "@/services/api";
 import { Product } from "@/types/products";
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
+import SearchArea from "./SearchArea";
 
 const ITEMS_PER_PAGE = 20;
 
@@ -57,7 +65,6 @@ export default function Products() {
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
 
-  // Handle delete
   const handleDeleteClick = (product: Product) => {
     setProductToDelete(product);
     setDeleteDialogOpen(true);
@@ -89,6 +96,65 @@ export default function Products() {
     }
   };
 
+  // Generate pagination items with ellipsis
+  const getPaginationItems = () => {
+    const items = [];
+    const showEllipsisThreshold = 7; // Show ellipsis when more than 7 pages
+    const siblingCount = 1; // Number of pages to show on each side of current page
+
+    if (totalPages <= showEllipsisThreshold) {
+      // Show all pages if total is small
+      for (let i = 1; i <= totalPages; i++) {
+        items.push(i);
+      }
+    } else {
+      // Always show first page
+      items.push(1);
+
+      // Calculate range around current page
+      const leftSiblingIndex = Math.max(currentPage - siblingCount, 2);
+      const rightSiblingIndex = Math.min(
+        currentPage + siblingCount,
+        totalPages - 1
+      );
+
+      const shouldShowLeftEllipsis = leftSiblingIndex > 2;
+      const shouldShowRightEllipsis = rightSiblingIndex < totalPages - 1;
+
+      if (!shouldShowLeftEllipsis && shouldShowRightEllipsis) {
+        // Show more pages on the left when near the start
+        const leftItemCount = 3 + 2 * siblingCount;
+        for (let i = 2; i <= leftItemCount; i++) {
+          items.push(i);
+        }
+        items.push("right-ellipsis");
+      } else if (shouldShowLeftEllipsis && !shouldShowRightEllipsis) {
+        // Show more pages on the right when near the end
+        items.push("left-ellipsis");
+        const rightItemCount = 3 + 2 * siblingCount;
+        for (
+          let i = totalPages - rightItemCount + 1;
+          i <= totalPages - 1;
+          i++
+        ) {
+          items.push(i);
+        }
+      } else {
+        // Show ellipsis on both sides
+        items.push("left-ellipsis");
+        for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
+          items.push(i);
+        }
+        items.push("right-ellipsis");
+      }
+
+      // Always show last page
+      items.push(totalPages);
+    }
+
+    return items;
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -107,26 +173,13 @@ export default function Products() {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Products</h1>
-        <Button onClick={() => refetch()}>Refresh</Button>
-      </div>
-
       {/* Search Bar */}
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 size-5" />
-        <Input
-          type="text"
-          placeholder="Search products by name..."
-          value={searchQuery}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setSearchQuery(e.target.value)
-          }
-          className="pl-10"
-        />
-      </div>
-
+      <SearchArea
+        refetch={refetch}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        debouncedSearch={debouncedSearch}
+      />
       {/* Products Grid */}
       {filteredProducts.length === 0 ? (
         <div className="text-center py-12">
@@ -138,7 +191,7 @@ export default function Products() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2  xl:grid-cols-3 2xl:grid-cols-4 gap-6">
             {paginatedProducts.map((product: Product) => (
               <ProductCard
                 key={product.id}
@@ -151,27 +204,54 @@ export default function Products() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-4 mt-8">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={goToPrevPage}
-                disabled={currentPage === 1}
-              >
-                <ChevronLeft className="size-4" />
-              </Button>
-              <span className="text-sm">
-                Page {currentPage} of {totalPages}
-              </span>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={goToNextPage}
-                disabled={currentPage === totalPages}
-              >
-                <ChevronRight className="size-4" />
-              </Button>
-            </div>
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={goToPrevPage}
+                    className={
+                      currentPage === 1
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }
+                  />
+                </PaginationItem>
+
+                {getPaginationItems().map((item, index) => {
+                  if (item === "left-ellipsis" || item === "right-ellipsis") {
+                    return (
+                      <PaginationItem key={`ellipsis-${item}`}>
+                        <PaginationEllipsis />
+                      </PaginationItem>
+                    );
+                  }
+
+                  const page = item as number;
+                  return (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        onClick={() => setCurrentPage(page)}
+                        isActive={currentPage === page}
+                        className="cursor-pointer"
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                })}
+
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={goToNextPage}
+                    className={
+                      currentPage === totalPages
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           )}
         </>
       )}
