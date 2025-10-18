@@ -25,14 +25,24 @@ export default function Products() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [offset, setOffset] = useState(0);
+
+  const baseQuery = `offset=${offset}&limit=${itemsPerPage}`;
+  const [queryString, setQueryString] = useState(`?${baseQuery}`);
+
+  useEffect(() => {
+    const string = debouncedSearch
+      ? `/search?searchedText=${debouncedSearch}&${baseQuery}`
+      : `?${baseQuery}`;
+    setQueryString(string);
+  }, [debouncedSearch, offset, itemsPerPage]);
+
   const {
     data: products = [],
     isLoading,
     error,
     refetch,
-  } = useGetProductsQuery(
-    debouncedSearch ? `searchedText=${debouncedSearch}` : ""
-  );
+  } = useGetProductsQuery(queryString);
 
   const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
 
@@ -40,9 +50,9 @@ export default function Products() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchQuery);
-    }, 600);
+    }, 3000);
 
-    return () => clearTimeout(timer);
+    // return () => clearTimeout(timer);
   }, [searchQuery]);
 
   const handleDeleteClick = (product: Product) => {
@@ -64,9 +74,10 @@ export default function Products() {
   };
 
   // Handle page navigation
-  const goToNextPage = () => {};
+  const goToNextPage = () => setOffset((pre) => pre + itemsPerPage);
 
-  const goToPrevPage = () => {};
+  const goToPrevPage = () =>
+    setOffset((pre) => Math.max(pre - itemsPerPage, 0));
 
   if (isLoading) {
     return (
@@ -82,6 +93,9 @@ export default function Products() {
         <ErrorMessage
           title="Error"
           message="Failed to load products. Please try again later."
+          // @ts-ignore
+          // description={error?.data}
+          onRetry={refetch}
         />
       </div>
     );
@@ -123,26 +137,31 @@ export default function Products() {
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2  xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-            {products.slice(0, itemsPerPage).map((product: Product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                handleDeleteClick={handleDeleteClick}
-                isDeleting={isDeleting}
-              />
+            {products.map((product: Product, i: number) => (
+              <div className="" key={i}>
+                <p>{i + 1}</p>
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  handleDeleteClick={handleDeleteClick}
+                  isDeleting={isDeleting}
+                />
+              </div>
             ))}
           </div>
-
-          {/* Pagination */}
-          {products.length > 2 && (
-            <PagenationBlock
-              goToPrevPage={goToPrevPage}
-              goToNextPage={goToNextPage}
-              setItemsPerPage={setItemsPerPage}
-            />
-          )}
         </>
       )}
+
+      {/* Pagination */}
+
+      <PagenationBlock
+        goToPrevPage={goToPrevPage}
+        goToNextPage={goToNextPage}
+        setItemsPerPage={setItemsPerPage}
+        offset={offset}
+        itemsPerPage={itemsPerPage}
+        fetchedItems={products?.length}
+      />
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

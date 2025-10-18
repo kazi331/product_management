@@ -3,12 +3,14 @@ import React from "react";
 interface ErrorMessageProps {
   title: string;
   message: string;
+  description?: string;
   onRetry?: () => void;
 }
 
 const ErrorMessage: React.FC<ErrorMessageProps> = ({
   title,
   message,
+  description,
   onRetry,
 }) => {
   return (
@@ -42,6 +44,11 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({
           >
             {message}
           </p>
+          {description && (
+            <div className="mt-1">
+              <p className="text-xs text-red-700">{description}</p>
+            </div>
+          )}
           {onRetry && (
             <div className="mt-3">
               <button
