@@ -71,10 +71,12 @@ export const dateView = (date: Date) => {
 };
 
 export const serializeError = (error: any) => {
-  const errorMessage =
-    "data" in error && typeof error.data === "object" && error.data !== null
-      ? (error.data as { message?: string }).message || "An error occurred"
-      : "An error occurred";
-
-  return errorMessage;
+  let msg = "";
+  if (error?.data) {
+    msg =
+      "data" in error && typeof error.data === "object" && error.data !== null
+        ? (error.data as { message?: string }).message || "An error occurred"
+        : "An error occurred";
+    return msg;
+  }
 };

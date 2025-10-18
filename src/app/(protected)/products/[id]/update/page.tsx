@@ -21,7 +21,7 @@ export default function Page() {
     return (
       <div className="container mx-auto max-w-md my-10">
         <ErrorMessage
-          message={errorMsg}
+          message={errorMsg || "Something went wrong"}
           title="Error 404"
           description="Product not found"
         />

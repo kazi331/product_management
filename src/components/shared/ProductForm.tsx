@@ -287,13 +287,7 @@ export function ProductForm({
                     >
                       <option value="">Select a category</option>
                       {categories?.map((category: Category) => (
-                        <option
-                          key={category?.id}
-                          value={category?.id}
-                          selected={
-                            initialData?.category.id === category?.id || false
-                          }
-                        >
+                        <option key={category?.id} value={category?.id}>
                           {category?.name}
                         </option>
                       ))}
