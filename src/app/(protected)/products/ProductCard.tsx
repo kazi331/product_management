@@ -28,7 +28,7 @@ export default function ProductCard({
       key={product.id}
       className="h-full hover:shadow-lg transition-all duration-200 hover:border-primary/40 group/link "
     >
-      <div className="aspect-video relative rounded overflow-hidden bg-gray-100">
+      <div className="aspect-video relative overflow-hidden bg-gray-100">
         <Image
           src={imgSrc}
           alt={product.name}

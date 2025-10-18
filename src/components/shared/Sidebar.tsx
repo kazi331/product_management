@@ -21,6 +21,7 @@ import {
   SidebarOpen,
   User,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -119,10 +120,12 @@ export default function Sidebar() {
               bg-muted hover:bg-primary text-foreground hover:text-white
               ${isOpen ? "" : "-full"} transition-colors`}
             >
-              <img
+              <Image
+                width={24}
+                height={24}
                 className="aspect-square size-6 -full"
                 alt="logo"
-                src="logo_brand.png"
+                src="/logo_brand.png"
               />
               <div
                 className={`grid flex-1 text-left text-sm leading-tight ${

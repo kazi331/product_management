@@ -136,15 +136,12 @@ export default function Products() {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2  xl:grid-cols-3 2xl:grid-cols-4 gap-6">
             {products.map((product: Product, i: number) => (
-              <div className="" key={i}>
-                <p>{i + 1}</p>
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  handleDeleteClick={handleDeleteClick}
-                  isDeleting={isDeleting}
-                />
-              </div>
+              <ProductCard
+                key={product.id}
+                product={product}
+                handleDeleteClick={handleDeleteClick}
+                isDeleting={isDeleting}
+              />
             ))}
           </div>
         </>
