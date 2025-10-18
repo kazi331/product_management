@@ -3,17 +3,10 @@
 import ErrorMessage from "@/components/shared/ErrorMessage";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import PagenationBlock from "@/components/shared/PagenationBlock";
+import ProductDeleteModal from "@/components/shared/ProductDeleteModal";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useDeleteProductMutation, useGetProductsQuery } from "@/services/api";
+import { useGetProductsQuery } from "@/services/api";
 import { Product } from "@/types/products";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -44,8 +37,6 @@ export default function Products() {
     refetch,
   } = useGetProductsQuery(queryString);
 
-  const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
-
   // Debounce search input
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -58,19 +49,6 @@ export default function Products() {
   const handleDeleteClick = (product: Product) => {
     setProductToDelete(product);
     setDeleteDialogOpen(true);
-  };
-
-  const confirmDelete = async () => {
-    if (!productToDelete) return;
-
-    try {
-      await deleteProduct(productToDelete.id).unwrap();
-      setDeleteDialogOpen(false);
-      setProductToDelete(null);
-      // RTK Query will automatically invalidate cache and refetch
-    } catch (error) {
-      console.error("Failed to delete product:", error);
-    }
   };
 
   // Handle page navigation
@@ -136,15 +114,11 @@ export default function Products() {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2  xl:grid-cols-3 2xl:grid-cols-4 gap-6">
             {products.map((product: Product, i: number) => (
-              <div className="" key={i}>
-                <p>{i + 1}</p>
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  handleDeleteClick={handleDeleteClick}
-                  isDeleting={isDeleting}
-                />
-              </div>
+              <ProductCard
+                key={product.id}
+                product={product}
+                handleDeleteClick={handleDeleteClick}
+              />
             ))}
           </div>
         </>
@@ -162,33 +136,11 @@ export default function Products() {
       />
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirm Delete</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete "{productToDelete?.name}"? This
-              action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setDeleteDialogOpen(false)}
-              disabled={isDeleting}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={confirmDelete}
-              disabled={isDeleting}
-            >
-              {isDeleting ? "Deleting..." : "Delete"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ProductDeleteModal
+        deleteDialogOpen={deleteDialogOpen}
+        dialogOpenChange={setDeleteDialogOpen}
+        product={productToDelete || ({} as Product)}
+      />
     </div>
   );
 }

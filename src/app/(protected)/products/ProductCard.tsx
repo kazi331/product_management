@@ -12,11 +12,9 @@ import { useEffect, useState } from "react";
 export default function ProductCard({
   product,
   handleDeleteClick,
-  isDeleting,
 }: {
   product: Product;
   handleDeleteClick: (product: Product) => void;
-  isDeleting: boolean;
 }) {
   const [imgSrc, setImgSrc] = useState("/images/no_image.png");
   useEffect(() => {
@@ -28,7 +26,7 @@ export default function ProductCard({
       key={product.id}
       className="h-full hover:shadow-lg transition-all duration-200 hover:border-primary/40 group/link "
     >
-      <div className="aspect-video relative rounded overflow-hidden bg-gray-100">
+      <div className="aspect-video relative overflow-hidden bg-gray-100">
         <Image
           src={imgSrc}
           alt={product.name}
@@ -66,7 +64,6 @@ export default function ProductCard({
               size="sm"
               variant="destructive"
               onClick={() => handleDeleteClick(product)}
-              disabled={isDeleting}
               className="cursor-pointer"
             >
               <Trash2 className="size-4" />

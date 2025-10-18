@@ -12,6 +12,7 @@ export const currency = (amount: number, locale = "en-US") => {
   return new Intl.NumberFormat(locale, {
     style: "currency",
     currency: "USD",
+    maximumFractionDigits: 2,
   }).format(amount);
 };
 
@@ -59,4 +60,12 @@ export const getImageSrc = (
   if (isValidUrl(url)) return url;
 
   return fallback;
+};
+
+export const dateView = (date: Date) => {
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 };
