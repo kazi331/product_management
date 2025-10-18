@@ -5,18 +5,13 @@ import { ProductForm } from "@/components/shared/ProductForm";
 import { serializeError } from "@/lib/utils";
 import { useGetProductQuery } from "@/services/api";
 import { useParams } from "next/navigation";
-import { useEffect } from "react";
 
 export default function Page() {
   const { id } = useParams();
   const { data: product, isLoading, error } = useGetProductQuery(id);
 
   const errorMsg = serializeError(error);
-  useEffect(() => {
-    if (errorMsg?.includes("Invalid product slug")) {
-      // window.location.href = "/404";
-    }
-  }, []);
+
   if (error) {
     return (
       <div className="container mx-auto max-w-md my-10">

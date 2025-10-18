@@ -1,3 +1,9 @@
+import { ProductForm } from "@/components/shared/ProductForm";
+
 export default function Page() {
-  return <div>Page</div>;
+  return (
+    <div className="my-10">
+      <ProductForm />
+    </div>
+  );
 }

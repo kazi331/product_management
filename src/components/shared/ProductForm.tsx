@@ -21,16 +21,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { ProductFormData, productSchema } from "@/lib/product_scheme";
 import {
+  useCreateProductMutation,
   useGetProductCategoriesQuery,
   useUpdateProductMutation,
 } from "@/services/api";
 import { Category } from "@/types/products";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, CheckCircle2, Loader2, Upload, X } from "lucide-react";
+import { AlertCircle, Loader2, Upload, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 interface ProductFormProps {
   initialData?: {
@@ -49,7 +51,6 @@ export function ProductForm({
   isLoading = false,
 }: ProductFormProps) {
   const isEditMode = !!initialData?.id;
-  const [submitSuccess, setSubmitSuccess] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -67,10 +68,6 @@ export function ProductForm({
     },
   });
 
-  const [
-    updateProduct,
-    { isError, isLoading: createLoading, isSuccess, error },
-  ] = useUpdateProductMutation();
   const {
     data: categories,
     isLoading: categoriesLoading,
@@ -144,22 +141,47 @@ export function ProductForm({
     form.setValue("images", updatedImages);
   };
 
-  const handleFormSubmit = async (data: ProductFormData) => {
-    setSubmitSuccess(false);
-    try {
-      const res = await updateProduct(data);
-      router.push(`/products/${res?.data?.slug}`); // Push to product page
+  const [
+    updateProduct,
+    { isError, isLoading: updateLoading, isSuccess, error },
+  ] = useUpdateProductMutation();
 
-      setSubmitSuccess(true);
-      if (!isEditMode) {
-        form.reset();
+  const [
+    createProduct,
+    {
+      isError: isCreateError,
+      isLoading: createLoading,
+      isSuccess: createSuccess,
+      error: createError,
+    },
+  ] = useCreateProductMutation();
+
+  const handleFormSubmit = async (data: ProductFormData) => {
+    if (isEditMode) {
+      try {
+        const res = await updateProduct(data);
+        router.push(`/products/${res?.data?.slug}`); // Push to product page
+        toast.success("Product updated successfully");
+      } catch (err: any) {
+        toast.error(err.data.message || "Failed to update product");
+        form.setError("root", {
+          message:
+            error instanceof Error ? error.message : "Failed to submit form",
+        });
       }
-      setTimeout(() => setSubmitSuccess(false), 3000);
-    } catch (error) {
-      form.setError("root", {
-        message:
-          error instanceof Error ? error.message : "Failed to submit form",
-      });
+    } else {
+      try {
+        // return console.log(data);
+        const res = await createProduct(data);
+        router.push(`/products/${res?.data?.slug}`); // Push to product page
+        toast.success("Product created successfully");
+      } catch (err: any) {
+        toast.error(err.data.message || "Failed to create product");
+        form.setError("root", {
+          message:
+            error instanceof Error ? error.message : "Failed to submit form",
+        });
+      }
     }
   };
 
@@ -179,16 +201,6 @@ export function ProductForm({
             onSubmit={form.handleSubmit(handleFormSubmit)}
             className="space-y-6"
           >
-            {/* Submit Success Alert */}
-            {submitSuccess && (
-              <Alert className="border-green-200 bg-green-50 text-green-800">
-                <CheckCircle2 className="h-4 w-4" />
-                <AlertDescription>
-                  Product {isEditMode ? "updated" : "created"} successfully!
-                </AlertDescription>
-              </Alert>
-            )}
-
             {/* Submit Error Alert */}
             {form.formState.errors.root && (
               <Alert className="border-red-200 bg-red-50 text-red-800">
