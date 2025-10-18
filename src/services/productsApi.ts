@@ -2,7 +2,7 @@ import { login } from "@/features/auth/authSlice";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { toast } from "sonner";
 
-export const api = createApi({
+export const productsApiapi = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
     baseUrl: "https://api.bitechx.com",
@@ -33,4 +33,4 @@ export const api = createApi({
   }),
 });
 
-export const { useLoginMutation, useGetProductsQuery } = api;
+export const { useLoginMutation, useGetProductsQuery } = productsApiapi;

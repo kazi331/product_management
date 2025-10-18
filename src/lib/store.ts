@@ -1,6 +1,6 @@
 import authSlice from "@/features/auth/authSlice";
 import sideBarSlice from "@/features/sidebar/sidebarSlice";
-import { api } from "@/services/authApi";
+import { api } from "@/services/api";
 import { configureStore } from "@reduxjs/toolkit";
 
 export const makeStore = () => {

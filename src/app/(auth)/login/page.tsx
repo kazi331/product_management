@@ -1,5 +1,5 @@
 "use client";
-import { useLoginMutation } from "@/services/authApi";
+import { useLoginMutation } from "@/services/api";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import SocialLogin from "./SocialLogin";

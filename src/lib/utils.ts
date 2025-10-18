@@ -7,3 +7,49 @@ export function cn(...inputs: ClassValue[]) {
 export const capitalizeFirstLetter = (text: string) => {
   return text.charAt(0).toUpperCase() + text.slice(1);
 };
+
+export const isValidEmail = (email: string) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+// check if the image can be loaded or not
+export const isValidImage = async (url: string) => {
+  try {
+    const response = await fetch(url, { method: "HEAD" });
+    return response.headers.get("content-type")?.startsWith("image/");
+  } catch (error) {
+    return false;
+  }
+};
+
+export const isValidUrl = (url: unknown): boolean => {
+  if (typeof url !== "string" || !url.trim()) return false;
+
+  let cleanedUrl = url.trim();
+
+  try {
+    new URL(cleanedUrl);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+export const getImageSrc = (
+  image: unknown,
+  fallback = "/images/no_image.png"
+): string => {
+  if (typeof image !== "string" || !image.trim()) return fallback;
+
+  let url = image.trim();
+
+  if (isValidUrl(url)) return url;
+
+  // Normalize and recheck
+  url = url.replace(/^\/+/, "");
+
+  if (isValidUrl(url)) return url;
+
+  return fallback;
+};
