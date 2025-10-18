@@ -18,8 +18,8 @@ export const api = createApi({
   // refetchOnFocus: true,
   // refetchOnReconnect: true,
 
-  endpoints: (builder) => ({
-    login: builder.mutation({
+  endpoints: ({ mutation, query }) => ({
+    login: mutation({
       query: (credentials) => ({
         url: "auth",
         method: "Post",
@@ -36,26 +36,29 @@ export const api = createApi({
         }
       },
     }),
-    getProducts: builder.query({
+    getProducts: query({
       query: (queryString: string) => `products${queryString}`,
     }),
-    getProduct: builder.query({
+    getProduct: query({
       query: (id) => `products/${id}`,
     }),
-    deleteProduct: builder.mutation({
+    getProductCategories: query({
+      query: () => `categories`,
+    }),
+    deleteProduct: mutation({
       query: (id) => ({
         url: `products/${id}`,
         method: "DELETE",
       }),
     }),
-    updateProduct: builder.mutation({
+    updateProduct: mutation({
       query: (data) => ({
         url: `products/${data.id}`,
         method: "PUT",
         body: data,
       }),
     }),
-    createProduct: builder.mutation({
+    createProduct: mutation({
       query: (data) => ({
         url: `products`,
         method: "POST",
@@ -69,6 +72,7 @@ export const {
   useLoginMutation,
   useGetProductsQuery,
   useGetProductQuery,
+  useGetProductCategoriesQuery,
   useDeleteProductMutation,
   useUpdateProductMutation,
   useCreateProductMutation,

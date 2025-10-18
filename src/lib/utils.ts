@@ -69,3 +69,12 @@ export const dateView = (date: Date) => {
     day: "numeric",
   });
 };
+
+export const serializeError = (error: any) => {
+  const errorMessage =
+    "data" in error && typeof error.data === "object" && error.data !== null
+      ? (error.data as { message?: string }).message || "An error occurred"
+      : "An error occurred";
+
+  return errorMessage;
+};

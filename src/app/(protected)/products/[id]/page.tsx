@@ -1,6 +1,8 @@
 "use client";
+import ErrorMessage from "@/components/shared/ErrorMessage";
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import ProductDeleteModal from "@/components/shared/ProductDeleteModal";
-import { currency, dateView } from "@/lib/utils";
+import { currency, dateView, serializeError } from "@/lib/utils";
 import { useGetProductQuery } from "@/services/api";
 import { ChevronLeft, ChevronRight, Edit2, Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -22,6 +24,25 @@ function App() {
       (prev) => (prev - 1 + product?.images?.length) % product?.images?.length
     );
   };
+
+  if (error) {
+    return (
+      <div className="container mx-auto max-w-md my-10">
+        <ErrorMessage
+          message={serializeError(error)}
+          title="Error 404"
+          description="Product not found"
+        />
+      </div>
+    );
+  }
+  if (isLoading) {
+    return (
+      <div className="container mx-auto max-w-md my-10">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background py-8 px-4 sm:px-6 lg:px-8  max-w-7xl mx-auto">

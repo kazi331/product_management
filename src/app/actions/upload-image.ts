@@ -1,7 +1,7 @@
 "use server";
 
 export async function uploadImageAction(formData: FormData): Promise<string> {
-  const IMGBB_API_KEY = process.env.IMGBB_API_KEY;
+  const IMGBB_API_KEY = "e7ed64f52420a87d8323875125375a4f";
 
   if (!IMGBB_API_KEY) {
     throw new Error(
