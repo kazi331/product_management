@@ -61,3 +61,11 @@ export const getImageSrc = (
 
   return fallback;
 };
+
+export const dateView = (date: Date) => {
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};

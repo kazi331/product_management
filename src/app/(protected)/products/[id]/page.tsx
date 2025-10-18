@@ -1,17 +1,9 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { currency } from "@/lib/utils";
-import { useDeleteProductMutation, useGetProductQuery } from "@/services/api";
-import { Product } from "@/types/products";
+import ProductDeleteModal from "@/components/shared/ProductDeleteModal";
+import { currency, dateView } from "@/lib/utils";
+import { useGetProductQuery } from "@/services/api";
 import { ChevronLeft, ChevronRight, Edit2, Trash2 } from "lucide-react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
@@ -22,11 +14,6 @@ function App() {
   const handleEdit = () => {
     console.log("Edit product:", product?.id);
   };
-
-  const handleDelete = () => {
-    console.log("Delete product:", product?.id);
-  };
-
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const nextImage = () => {
@@ -39,24 +26,22 @@ function App() {
     );
   };
 
-  const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
-
-  const handleDeleteClick = (product: Product) => {
-    setDeleteDialogOpen(true);
-  };
-
-  const confirmDelete = async () => {
-    try {
-      await deleteProduct(id).unwrap();
-      setDeleteDialogOpen(false);
-    } catch (error) {
-      console.error("Failed to delete product:", error);
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-background py-8 px-4 sm:px-6 lg:px-8">
-      <div className="grid lg:grid-cols-2 gap-8 p-6 lg:p-12 max-w-7xl mx-auto bg-card rounded-lg shadow-sm overflow-hidden border border-border">
+    <div className="min-h-screen bg-background py-8 px-4 sm:px-6 lg:px-8  max-w-7xl mx-auto">
+      <Link
+        href="/products"
+        className="inline-flex items-center text-primary hover:text-accent transition-colors mb-3"
+      >
+        <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fillRule="evenodd"
+            d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+            clipRule="evenodd"
+          />
+        </svg>
+        Back to products
+      </Link>
+      <div className="grid lg:grid-cols-2 gap-8 p-6 lg:p-12 bg-card rounded-lg shadow-sm overflow-hidden border border-border">
         {/* Image Gallery */}
         <div className="space-y-4">
           <div className="relative aspect-square bg-muted rounded-lg overflow-hidden group">
@@ -171,21 +156,13 @@ function App() {
                 <div>
                   <p className="text-muted-foreground">Created</p>
                   <p className="font-medium text-foreground">
-                    {new Date(product?.createdAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                    {dateView(product?.createdAt)}
                   </p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Last Updated</p>
                   <p className="font-medium text-foreground">
-                    {new Date(product?.updatedAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                    {dateView(product?.updatedAt)}
                   </p>
                 </div>
               </div>
@@ -194,13 +171,14 @@ function App() {
 
           {/* Action Area */}
           <div className="flex gap-3 mt-8 pt-6 border-t border-border">
-            <button
+            <Link
+              href={`/products/${product?.slug}/update`}
               onClick={handleEdit}
               className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
             >
               <Edit2 className="w-5 h-5" />
               Edit Product
-            </button>
+            </Link>
             <button
               onClick={() => setDeleteDialogOpen(true)}
               className="flex items-center justify-center gap-2 px-6 py-3 bg-destructive text-destructive-foreground font-medium rounded-lg hover:bg-destructive/90 transition-colors shadow-sm"
@@ -211,34 +189,12 @@ function App() {
           </div>
         </div>
       </div>
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirm Delete</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete " {product?.name} "? This action
-              cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setDeleteDialogOpen(false)}
-              disabled={isDeleting}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="default"
-              onClick={confirmDelete}
-              disabled={isDeleting}
-              className="bg-destructive text-destructive-foreground"
-            >
-              {isDeleting ? "Deleting..." : "Delete"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+
+      <ProductDeleteModal
+        deleteDialogOpen={deleteDialogOpen}
+        dialogOpenChange={setDeleteDialogOpen}
+        product={product}
+      />
     </div>
   );
 }
