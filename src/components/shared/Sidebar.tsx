@@ -7,13 +7,23 @@ import { sidebarCollapsedWidth, sidebarExpandedWidth } from "@/lib/config";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
-import { Files, Home, SidebarClose, SidebarOpen } from "lucide-react";
+import {
+  Bell,
+  CreditCard,
+  Files,
+  Home,
+  LogOut,
+  SidebarClose,
+  SidebarOpen,
+  User,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Button } from "../ui/button";
 
 const sidebarItems = [
   { name: "Products", link: "/", icon: <Home /> },
@@ -146,19 +156,30 @@ export default function Sidebar() {
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          side="top"
+          side="right"
           align="end"
-          className="w-52 space-y-0.5 mb-2"
+          className="w-52 space-y-0.5 mb-2 bg-gray-800 border border-gray-700 rounded-lg p-2"
         >
-          <Button className="w-full cursor-pointer bg-slate-600 hover:bg-slate-600/80">
-            Profile
-          </Button>
-          <Button
+          <DropdownMenuItem className="flex items-center gap-3 p-2 hover:bg-gray-700 rounded cursor-pointer text-sm text-white">
+            <User className="size-4" />
+            <span>Account</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem className="flex items-center gap-3 p-2 hover:bg-gray-700 rounded cursor-pointer text-sm text-white">
+            <CreditCard className="size-4" />
+            <span>Billing</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem className="flex items-center gap-3 p-2 hover:bg-gray-700 rounded cursor-pointer text-sm text-white">
+            <Bell className="size-4" />
+            <span>Notifications</span>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator className="my-1 h-px bg-gray-700" />
+          <DropdownMenuItem
+            className="flex items-center gap-3 p-2 hover:bg-gray-700 rounded cursor-pointer text-sm text-white"
             onClick={handleLogout}
-            className="w-full cursor-pointer bg-slate-600 hover:bg-slate-600/80"
           >
-            Logout
-          </Button>
+            <LogOut className="size-4" />
+            <span>Log out</span>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </nav>

@@ -7,6 +7,8 @@ export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "https://api.bitechx.com",
   }),
+  refetchOnFocus: true,
+  refetchOnReconnect: true,
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (credentials) => ({
