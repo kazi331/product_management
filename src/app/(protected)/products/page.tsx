@@ -6,8 +6,13 @@ import ErrorMessage from "@/components/shared/ErrorMessage";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import PagenationBlock from "@/components/shared/PagenationBlock";
 import ProductDeleteModal from "@/components/shared/ProductDeleteModal";
-import { useGetProductsQuery } from "@/services/api";
-import { Product } from "@/types/products";
+import { Button } from "@/components/ui/button";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import {
+  useGetProductCategoriesQuery,
+  useGetProductsQuery,
+} from "@/services/api";
+import { Category, Product } from "@/types/products";
 import { useEffect, useState } from "react";
 
 export default function Products() {
@@ -17,6 +22,7 @@ export default function Products() {
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [offset, setOffset] = useState(0);
+  const [category, setCategory] = useState<string | null>(null);
 
   const baseQuery = `offset=${offset}&limit=${itemsPerPage}`;
   const [queryString, setQueryString] = useState(`?${baseQuery}`);
@@ -24,9 +30,11 @@ export default function Products() {
   useEffect(() => {
     const string = debouncedSearch
       ? `/search?searchedText=${debouncedSearch}&${baseQuery}`
+      : category
+      ? `?categoryId=${category}&${baseQuery}`
       : `?${baseQuery}`;
     setQueryString(string);
-  }, [debouncedSearch, offset, itemsPerPage]);
+  }, [debouncedSearch, offset, itemsPerPage, category]);
 
   const {
     data: products = [],
@@ -34,6 +42,8 @@ export default function Products() {
     error,
     refetch,
   } = useGetProductsQuery(queryString);
+
+  const { data: categories } = useGetProductCategoriesQuery({});
 
   // Debounce search input
   useEffect(() => {
@@ -84,6 +94,16 @@ export default function Products() {
         refetch={refetch}
         debouncedSearch={debouncedSearch}
       />
+      <ScrollArea className="max-w-full">
+        <div className="flex items-center gap-2">
+          {categories?.map((category: Category) => (
+            <Button key={category.id} onClick={() => setCategory(category.id)}>
+              {category?.name}
+            </Button>
+          ))}
+        </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
       {/* Products Grid */}
       {products.length === 0 ? (
         <div className="text-center py-12">
