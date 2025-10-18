@@ -12,6 +12,7 @@ export const currency = (amount: number, locale = "en-US") => {
   return new Intl.NumberFormat(locale, {
     style: "currency",
     currency: "USD",
+    maximumFractionDigits: 2,
   }).format(amount);
 };
 
