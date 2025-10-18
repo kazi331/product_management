@@ -2,6 +2,7 @@
 
 import ErrorMessage from "@/components/shared/ErrorMessage";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import PagenationBlock from "@/components/shared/PagenationBlock";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,20 +12,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import { Input } from "@/components/ui/input";
 import { useDeleteProductMutation, useGetProductsQuery } from "@/services/api";
 import { Product } from "@/types/products";
+import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
-import SearchArea from "./SearchArea";
 
 const ITEMS_PER_PAGE = 20;
 
@@ -35,13 +28,13 @@ export default function Products() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
 
-  // Fetch products with RTK Query
   const {
     data: products = [],
     isLoading,
     error,
     refetch,
   } = useGetProductsQuery("");
+
   const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
 
   // Debounce search input
@@ -96,65 +89,6 @@ export default function Products() {
     }
   };
 
-  // Generate pagination items with ellipsis
-  const getPaginationItems = () => {
-    const items = [];
-    const showEllipsisThreshold = 7; // Show ellipsis when more than 7 pages
-    const siblingCount = 1; // Number of pages to show on each side of current page
-
-    if (totalPages <= showEllipsisThreshold) {
-      // Show all pages if total is small
-      for (let i = 1; i <= totalPages; i++) {
-        items.push(i);
-      }
-    } else {
-      // Always show first page
-      items.push(1);
-
-      // Calculate range around current page
-      const leftSiblingIndex = Math.max(currentPage - siblingCount, 2);
-      const rightSiblingIndex = Math.min(
-        currentPage + siblingCount,
-        totalPages - 1
-      );
-
-      const shouldShowLeftEllipsis = leftSiblingIndex > 2;
-      const shouldShowRightEllipsis = rightSiblingIndex < totalPages - 1;
-
-      if (!shouldShowLeftEllipsis && shouldShowRightEllipsis) {
-        // Show more pages on the left when near the start
-        const leftItemCount = 3 + 2 * siblingCount;
-        for (let i = 2; i <= leftItemCount; i++) {
-          items.push(i);
-        }
-        items.push("right-ellipsis");
-      } else if (shouldShowLeftEllipsis && !shouldShowRightEllipsis) {
-        // Show more pages on the right when near the end
-        items.push("left-ellipsis");
-        const rightItemCount = 3 + 2 * siblingCount;
-        for (
-          let i = totalPages - rightItemCount + 1;
-          i <= totalPages - 1;
-          i++
-        ) {
-          items.push(i);
-        }
-      } else {
-        // Show ellipsis on both sides
-        items.push("left-ellipsis");
-        for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
-          items.push(i);
-        }
-        items.push("right-ellipsis");
-      }
-
-      // Always show last page
-      items.push(totalPages);
-    }
-
-    return items;
-  };
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -166,7 +100,10 @@ export default function Products() {
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <ErrorMessage message="Failed to load products. Please try again later." />
+        <ErrorMessage
+          title="Error"
+          message="Failed to load products. Please try again later."
+        />
       </div>
     );
   }
@@ -174,12 +111,28 @@ export default function Products() {
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* Search Bar */}
-      <SearchArea
-        refetch={refetch}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        debouncedSearch={debouncedSearch}
-      />
+
+      <div className="">
+        <div className="flex items-center justify-between mb-4">
+          <div className="relative max-w-md w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 size-5" />
+            <Input
+              type="text"
+              placeholder="Search products by name..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 focus-visible:ring-0"
+            />
+          </div>
+          <div className="flex items-center justify-between">
+            <Button onClick={() => refetch()}>Refresh</Button>
+          </div>
+        </div>
+        <p className="h-5">
+          {debouncedSearch ? `Results for: ${debouncedSearch}` : ""}
+        </p>
+      </div>
+
       {/* Products Grid */}
       {filteredProducts.length === 0 ? (
         <div className="text-center py-12">
@@ -204,54 +157,13 @@ export default function Products() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    onClick={goToPrevPage}
-                    className={
-                      currentPage === 1
-                        ? "pointer-events-none opacity-50"
-                        : "cursor-pointer"
-                    }
-                  />
-                </PaginationItem>
-
-                {getPaginationItems().map((item, index) => {
-                  if (item === "left-ellipsis" || item === "right-ellipsis") {
-                    return (
-                      <PaginationItem key={`ellipsis-${item}`}>
-                        <PaginationEllipsis />
-                      </PaginationItem>
-                    );
-                  }
-
-                  const page = item as number;
-                  return (
-                    <PaginationItem key={page}>
-                      <PaginationLink
-                        onClick={() => setCurrentPage(page)}
-                        isActive={currentPage === page}
-                        className="cursor-pointer"
-                      >
-                        {page}
-                      </PaginationLink>
-                    </PaginationItem>
-                  );
-                })}
-
-                <PaginationItem>
-                  <PaginationNext
-                    onClick={goToNextPage}
-                    className={
-                      currentPage === totalPages
-                        ? "pointer-events-none opacity-50"
-                        : "cursor-pointer"
-                    }
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
+            <PagenationBlock
+              currentPage={currentPage}
+              totalPages={totalPages}
+              goToPrevPage={goToPrevPage}
+              goToNextPage={goToNextPage}
+              setCurrentPage={setCurrentPage}
+            />
           )}
         </>
       )}

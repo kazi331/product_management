@@ -30,7 +30,7 @@ export default function SearchArea({
           />
         </div>
         <div className="flex items-center justify-between">
-          <Button onClick={() => refetch()}>Refresh</Button>
+          <Button onClick={() => refetch()}>{"Refresh"}</Button>
         </div>
       </div>
       <p className="h-5">
