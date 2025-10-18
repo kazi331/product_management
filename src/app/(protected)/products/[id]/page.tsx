@@ -14,12 +14,12 @@ function App() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % product?.images.length);
+    setCurrentImageIndex((prev) => (prev + 1) % product?.images?.length);
   };
 
   const prevImage = () => {
     setCurrentImageIndex(
-      (prev) => (prev - 1 + product?.images.length) % product?.images.length
+      (prev) => (prev - 1 + product?.images?.length) % product?.images?.length
     );
   };
 
@@ -44,12 +44,14 @@ function App() {
           <div className="relative aspect-square bg-muted rounded-lg overflow-hidden group">
             {/* main image */}
             <img
-              src={product?.images[currentImageIndex]}
+              src={
+                product?.images?.[currentImageIndex] || "/images/no_image.png"
+              }
               alt={`${product?.name} - Image ${currentImageIndex + 1}`}
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
             {/* next prev buttons */}
-            {product?.images.length > 1 && (
+            {product?.images?.length > 1 && (
               <>
                 <button
                   onClick={prevImage}
@@ -68,7 +70,7 @@ function App() {
               </>
             )}
             {/* mini controllers */}
-            {product?.images.length > 1 && (
+            {product?.images?.length > 1 && (
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
                 {product?.images.map((_: string, index: number) => (
                   <button
@@ -88,7 +90,7 @@ function App() {
 
           {/* Image Thumbnails */}
 
-          {product?.images.length > 1 && (
+          {product?.images?.length > 1 && (
             <div className="grid grid-cols-4 gap-3">
               {product?.images
                 .slice(0, 4)
