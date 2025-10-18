@@ -22,7 +22,9 @@ export default function Products() {
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [offset, setOffset] = useState(0);
-  const [category, setCategory] = useState<string | null>(null);
+  const [category, setCategory] = useState<{ name: string; id: string } | null>(
+    null
+  );
 
   const baseQuery = `offset=${offset}&limit=${itemsPerPage}`;
   const [queryString, setQueryString] = useState(`?${baseQuery}`);
@@ -31,7 +33,7 @@ export default function Products() {
     const string = debouncedSearch
       ? `/search?searchedText=${debouncedSearch}&${baseQuery}`
       : category
-      ? `?categoryId=${category}&${baseQuery}`
+      ? `?categoryId=${category.id}&${baseQuery}`
       : `?${baseQuery}`;
     setQueryString(string);
   }, [debouncedSearch, offset, itemsPerPage, category]);
@@ -96,9 +98,13 @@ export default function Products() {
       />
       <ScrollArea className="max-w-full">
         <div className="flex items-center gap-2">
-          {categories?.map((category: Category) => (
-            <Button key={category.id} onClick={() => setCategory(category.id)}>
-              {category?.name}
+          {categories?.map((item: Category) => (
+            <Button
+              variant={category?.name === item?.name ? "default" : "outline"}
+              key={item.id}
+              onClick={() => setCategory({ name: item.name, id: item.id })}
+            >
+              {item?.name}
             </Button>
           ))}
         </div>
