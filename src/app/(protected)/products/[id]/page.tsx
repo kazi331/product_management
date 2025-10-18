@@ -11,9 +11,6 @@ function App() {
   const { id } = useParams();
   const { data: product, isLoading, isError, error } = useGetProductQuery(id);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const handleEdit = () => {
-    console.log("Edit product:", product?.id);
-  };
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const nextImage = () => {
@@ -173,7 +170,6 @@ function App() {
           <div className="flex gap-3 mt-8 pt-6 border-t border-border">
             <Link
               href={`/products/${product?.slug}/update`}
-              onClick={handleEdit}
               className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
             >
               <Edit2 className="w-5 h-5" />

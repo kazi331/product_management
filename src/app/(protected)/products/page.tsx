@@ -1,16 +1,14 @@
 "use client";
 
+import ProductCard from "@/components/products/ProductCard";
+import SearchArea from "@/components/products/SearchArea";
 import ErrorMessage from "@/components/shared/ErrorMessage";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import PagenationBlock from "@/components/shared/PagenationBlock";
 import ProductDeleteModal from "@/components/shared/ProductDeleteModal";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useGetProductsQuery } from "@/services/api";
 import { Product } from "@/types/products";
-import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
-import ProductCard from "./ProductCard";
 
 export default function Products() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -80,27 +78,12 @@ export default function Products() {
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* Search Bar */}
-      <div className="">
-        <div className="flex items-center justify-between mb-4">
-          <div className="relative max-w-md w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 size-5" />
-            <Input
-              type="text"
-              placeholder="Search products by name..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 focus-visible:ring-0"
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <Button onClick={() => refetch()}>Refresh</Button>
-          </div>
-        </div>
-        <p className="h-5">
-          {debouncedSearch ? `Results for: ${debouncedSearch}` : ""}
-        </p>
-      </div>
-
+      <SearchArea
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        refetch={refetch}
+        debouncedSearch={debouncedSearch}
+      />
       {/* Products Grid */}
       {products.length === 0 ? (
         <div className="text-center py-12">

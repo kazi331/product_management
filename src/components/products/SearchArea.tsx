@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import { ChangeEvent, Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react";
 
 export default function SearchArea({
   searchQuery,
@@ -23,14 +23,12 @@ export default function SearchArea({
             type="text"
             placeholder="Search products by name..."
             value={searchQuery}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setSearchQuery(e.target.value)
-            }
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 focus-visible:ring-0"
           />
         </div>
         <div className="flex items-center justify-between">
-          <Button onClick={() => refetch()}>{"Refresh"}</Button>
+          <Button onClick={() => refetch()}>Refresh</Button>
         </div>
       </div>
       <p className="h-5">
