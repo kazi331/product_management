@@ -50,9 +50,9 @@ export default function Products() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchQuery);
-    }, 3000);
+    }, 300);
 
-    // return () => clearTimeout(timer);
+    return () => clearTimeout(timer);
   }, [searchQuery]);
 
   const handleDeleteClick = (product: Product) => {
@@ -93,8 +93,6 @@ export default function Products() {
         <ErrorMessage
           title="Error"
           message="Failed to load products. Please try again later."
-          // @ts-ignore
-          // description={error?.data}
           onRetry={refetch}
         />
       </div>

@@ -33,7 +33,7 @@ export const isValidImage = async (url: string) => {
 export const isValidUrl = (url: unknown): boolean => {
   if (typeof url !== "string" || !url.trim()) return false;
 
-  let cleanedUrl = url.trim();
+  const cleanedUrl = url.trim();
 
   try {
     new URL(cleanedUrl);
