@@ -186,7 +186,7 @@ export function ProductForm({
   };
 
   return (
-    <Card className="w-full max-w-lg mx-auto">
+    <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
         <CardTitle>{isEditMode ? "Edit Product" : "Create Product"}</CardTitle>
         <CardDescription>
@@ -429,32 +429,32 @@ export function ProductForm({
                           Added Images ({field.value.length}/10)
                         </p>
                         <div className="space-y-2">
-                          {field.value.map((image, index) => (
-                            <div
-                              key={index}
-                              className="flex items-center justify-between p-3 bg-muted rounded-md"
-                            >
-                              <div className="flex-1 min-w-0">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                            {field.value.map((image, index) => (
+                              <div
+                                key={index}
+                                className="relative group aspect-square bg-muted rounded-md overflow-hidden"
+                              >
                                 <img
                                   src={image || "/placeholder.svg"}
                                   alt={`Product ${index + 1}`}
-                                  className="h-12 w-12 object-cover rounded mr-3 inline-block"
+                                  className="w-full h-full object-cover"
                                 />
+                                <Button
+                                  type="button"
+                                  onClick={() => handleRemoveImage(index)}
+                                  disabled={
+                                    form.formState.isSubmitting || isLoading
+                                  }
+                                  variant="destructive"
+                                  size="icon"
+                                  className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                  <X className="h-3 w-3" />
+                                </Button>
                               </div>
-                              <Button
-                                type="button"
-                                onClick={() => handleRemoveImage(index)}
-                                disabled={
-                                  form.formState.isSubmitting || isLoading
-                                }
-                                variant="ghost"
-                                size="sm"
-                                className="ml-2"
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
                       </div>
                     )}
