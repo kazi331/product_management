@@ -19,15 +19,12 @@ import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
 
-const ITEMS_PER_PAGE = 10;
-
 export default function Products() {
-  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
-
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const {
     data: products = [],
     isLoading,
@@ -43,8 +40,7 @@ export default function Products() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchQuery);
-      setCurrentPage(1); // Reset to first page on search
-    }, 300);
+    }, 600);
 
     return () => clearTimeout(timer);
   }, [searchQuery]);
@@ -127,7 +123,7 @@ export default function Products() {
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2  xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-            {products.map((product: Product) => (
+            {products.slice(0, itemsPerPage).map((product: Product) => (
               <ProductCard
                 key={product.id}
                 product={product}
@@ -138,10 +134,11 @@ export default function Products() {
           </div>
 
           {/* Pagination */}
-          {products.length > 10 && (
+          {products.length > 2 && (
             <PagenationBlock
               goToPrevPage={goToPrevPage}
               goToNextPage={goToNextPage}
+              setItemsPerPage={setItemsPerPage}
             />
           )}
         </>
