@@ -33,7 +33,9 @@ export default function Products() {
     isLoading,
     error,
     refetch,
-  } = useGetProductsQuery("");
+  } = useGetProductsQuery(
+    debouncedSearch ? `searchedText=${debouncedSearch}` : ""
+  );
 
   const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
 
@@ -48,15 +50,12 @@ export default function Products() {
   }, [searchQuery]);
 
   // Filter products based on search
-  const filteredProducts = products.filter((product: Product) =>
-    product?.name?.toLowerCase().includes(debouncedSearch.toLowerCase())
-  );
 
   // Pagination logic
-  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-  const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
+  const paginatedProducts = products.slice(startIndex, endIndex);
 
   const handleDeleteClick = (product: Product) => {
     setProductToDelete(product);
@@ -111,7 +110,6 @@ export default function Products() {
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* Search Bar */}
-
       <div className="">
         <div className="flex items-center justify-between mb-4">
           <div className="relative max-w-md w-full">
@@ -134,7 +132,7 @@ export default function Products() {
       </div>
 
       {/* Products Grid */}
-      {filteredProducts.length === 0 ? (
+      {products.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-500 text-lg">
             {debouncedSearch
