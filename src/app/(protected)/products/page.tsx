@@ -19,7 +19,7 @@ import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
 
-const ITEMS_PER_PAGE = 20;
+const ITEMS_PER_PAGE = 10;
 
 export default function Products() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -49,14 +49,6 @@ export default function Products() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Filter products based on search
-
-  // Pagination logic
-  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const paginatedProducts = products.slice(startIndex, endIndex);
-
   const handleDeleteClick = (product: Product) => {
     setProductToDelete(product);
     setDeleteDialogOpen(true);
@@ -76,17 +68,9 @@ export default function Products() {
   };
 
   // Handle page navigation
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
+  const goToNextPage = () => {};
 
-  const goToPrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
+  const goToPrevPage = () => {};
 
   if (isLoading) {
     return (
@@ -143,7 +127,7 @@ export default function Products() {
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2  xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-            {paginatedProducts.map((product: Product) => (
+            {products.map((product: Product) => (
               <ProductCard
                 key={product.id}
                 product={product}
@@ -154,13 +138,10 @@ export default function Products() {
           </div>
 
           {/* Pagination */}
-          {totalPages > 1 && (
+          {products.length > 10 && (
             <PagenationBlock
-              currentPage={currentPage}
-              totalPages={totalPages}
               goToPrevPage={goToPrevPage}
               goToNextPage={goToNextPage}
-              setCurrentPage={setCurrentPage}
             />
           )}
         </>
