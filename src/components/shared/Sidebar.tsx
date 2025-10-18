@@ -67,7 +67,7 @@ export default function Sidebar() {
             className="absolute top-1/2 -translate-y-1/2 left-3 
             bg-muted text-foreground
             hover:bg-primary hover:text-white
-            p-2 rounded-full shadow-lg transition-colors"
+            p-2 -full shadow-lg transition-colors"
             onClick={() => dispatch(toggleSideBar())}
           >
             {isOpen ? (
@@ -86,12 +86,13 @@ export default function Sidebar() {
         }`}
       >
         {sidebarItems.map((item) => {
-          const active = pathname === item.link;
+          let active = pathname === item.link;
+          if (item.name === "Products" && pathname === "/") active = true;
           return (
             <Link
               key={item.name}
               href={item.link}
-              className={`flex items-center gap-3 p-2 rounded cursor-pointer transition-colors
+              className={`flex items-center gap-3 p-2  cursor-pointer transition-colors
                 ${
                   active
                     ? "bg-primary text-white"
@@ -100,7 +101,7 @@ export default function Sidebar() {
                 
                 ${active ? "border-primary" : "border-transparent"}`}
             >
-              {item.icon}
+              <div className="block"> {item.icon}</div>
               <span className={`text-sm ${isOpen ? "block" : "hidden"}`}>
                 {item.name}
               </span>
@@ -114,12 +115,12 @@ export default function Sidebar() {
         <DropdownMenuTrigger asChild>
           <div className="absolute bottom-4 left-0 right-0 text-2xl font-bold flex flex-col gap-2 mx-2">
             <div
-              className={`flex items-center gap-3 p-2 rounded cursor-pointer justify-start
+              className={`flex items-center gap-3 p-2  cursor-pointer justify-start
               bg-muted hover:bg-primary text-foreground hover:text-white
-              ${isOpen ? "rounded" : "rounded-full"} transition-colors`}
+              ${isOpen ? "" : "-full"} transition-colors`}
             >
               <img
-                className="aspect-square size-6 rounded-full"
+                className="aspect-square size-6 -full"
                 alt="logo"
                 src="logo_brand.png"
               />
@@ -144,22 +145,22 @@ export default function Sidebar() {
           align="end"
           className="w-52 space-y-0.5 mb-2 bg-white p-2 text-foreground shadow-lg"
         >
-          <DropdownMenuItem className="flex items-center gap-3 p-2 rounded cursor-pointer text-sm hover:bg-muted transition-colors">
+          <DropdownMenuItem className="flex items-center gap-3 p-2  cursor-pointer text-sm hover:bg-muted transition-colors">
             <User className="size-4" />
             <span>Account</span>
           </DropdownMenuItem>
-          <DropdownMenuItem className="flex items-center gap-3 p-2 rounded cursor-pointer text-sm hover:bg-muted transition-colors">
+          <DropdownMenuItem className="flex items-center gap-3 p-2  cursor-pointer text-sm hover:bg-muted transition-colors">
             <CreditCard className="size-4" />
             <span>Billing</span>
           </DropdownMenuItem>
-          <DropdownMenuItem className="flex items-center gap-3 p-2 rounded cursor-pointer text-sm hover:bg-muted transition-colors">
+          <DropdownMenuItem className="flex items-center gap-3 p-2  cursor-pointer text-sm hover:bg-muted transition-colors">
             <Bell className="size-4" />
             <span>Notifications</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator className="my-1 h-px bg-border" />
           <DropdownMenuItem
             onClick={handleLogout}
-            className="flex items-center gap-3 p-2 rounded cursor-pointer text-sm text-destructive hover:bg-destructive hover:text-white transition-colors"
+            className="flex items-center gap-3 p-2  cursor-pointer text-sm text-destructive hover:bg-destructive hover:text-white transition-colors"
           >
             <LogOut className="size-4" />
             <span>Log out</span>

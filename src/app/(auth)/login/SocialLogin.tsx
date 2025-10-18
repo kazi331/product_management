@@ -8,7 +8,7 @@ export default function SocialLogin() {
       {socialButtons.map((item) => (
         <button
           key={item}
-          className="w-full text-slate-700 border py-1.5 px-6 focus:outline-none hover:bg-slate-100 rounded cursor-pointer"
+          className="w-full text-slate-700 border py-1.5 px-6 focus:outline-none hover:bg-slate-100  cursor-pointer"
           type="button"
           onClick={() => socialLogin(item as SocialProvider)}
         >

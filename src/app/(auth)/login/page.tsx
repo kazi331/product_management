@@ -26,7 +26,7 @@ export default function Page() {
         <div className="min-h-screen grid place-items-center">
           <form
             onSubmit={handleLogin}
-            className="bg-white flex flex-col w-full md:w-1/2 px-8 py-8 rounded-lg shadow-lg"
+            className="bg-white flex flex-col w-full md:w-1/2 px-8 py-8 -lg shadow-lg"
           >
             <h2 className="text-gray-900 mb-10 font-bold text-3xl title-font text-center ">
               Login
@@ -46,7 +46,7 @@ export default function Page() {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={`w-full bg-white rounded border  ${
+                className={`w-full bg-white  border  ${
                   isError ? "border-red-500" : "border-gray-300"
                 } focus:border-primary focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out`}
               />
@@ -54,7 +54,7 @@ export default function Page() {
 
             <button
               disabled={isLoading}
-              className="text-white bg-primary/90 disabled:bg-primary/80 disabled:cursor-wait border-0 py-2 px-6 focus:outline-none hover:bg-primary rounded text-lg cursor-pointer mt-4"
+              className="text-white bg-primary/90 disabled:bg-primary/80 disabled:cursor-wait border-0 py-2 px-6 focus:outline-none hover:bg-primary  text-lg cursor-pointer mt-4"
             >
               {isLoading ? "Processing..." : "Login"}
             </button>
