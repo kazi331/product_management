@@ -16,6 +16,8 @@ import {
   CreditCard,
   Files,
   Home,
+  ImageDown,
+  ImageUp,
   LogOut,
   SidebarClose,
   SidebarOpen,
@@ -28,6 +30,7 @@ import { useEffect } from "react";
 
 const sidebarItems = [
   { name: "Products", link: "/products", icon: <Home /> },
+  { name: "Add Product", link: "/add-product", icon: <ImageUp /> },
   { name: "Categories", link: "/categories", icon: <Files /> },
 ];
 

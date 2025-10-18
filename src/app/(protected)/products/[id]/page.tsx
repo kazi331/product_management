@@ -1,6 +1,8 @@
 "use client";
+import ErrorMessage from "@/components/shared/ErrorMessage";
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import ProductDeleteModal from "@/components/shared/ProductDeleteModal";
-import { currency, dateView } from "@/lib/utils";
+import { currency, dateView, serializeError } from "@/lib/utils";
 import { useGetProductQuery } from "@/services/api";
 import { ChevronLeft, ChevronRight, Edit2, Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -11,20 +13,36 @@ function App() {
   const { id } = useParams();
   const { data: product, isLoading, isError, error } = useGetProductQuery(id);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const handleEdit = () => {
-    console.log("Edit product:", product?.id);
-  };
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % product?.images.length);
+    setCurrentImageIndex((prev) => (prev + 1) % product?.images?.length);
   };
 
   const prevImage = () => {
     setCurrentImageIndex(
-      (prev) => (prev - 1 + product?.images.length) % product?.images.length
+      (prev) => (prev - 1 + product?.images?.length) % product?.images?.length
     );
   };
+
+  if (error) {
+    return (
+      <div className="container mx-auto max-w-md my-10">
+        <ErrorMessage
+          message={serializeError(error)}
+          title="Error 404"
+          description="Product not found"
+        />
+      </div>
+    );
+  }
+  if (isLoading) {
+    return (
+      <div className="container mx-auto max-w-md my-10">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background py-8 px-4 sm:px-6 lg:px-8  max-w-7xl mx-auto">
@@ -47,12 +65,14 @@ function App() {
           <div className="relative aspect-square bg-muted rounded-lg overflow-hidden group">
             {/* main image */}
             <img
-              src={product?.images[currentImageIndex]}
+              src={
+                product?.images?.[currentImageIndex] || "/images/no_image.png"
+              }
               alt={`${product?.name} - Image ${currentImageIndex + 1}`}
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
             {/* next prev buttons */}
-            {product?.images.length > 1 && (
+            {product?.images?.length > 1 && (
               <>
                 <button
                   onClick={prevImage}
@@ -71,7 +91,7 @@ function App() {
               </>
             )}
             {/* mini controllers */}
-            {product?.images.length > 1 && (
+            {product?.images?.length > 1 && (
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
                 {product?.images.map((_: string, index: number) => (
                   <button
@@ -91,7 +111,7 @@ function App() {
 
           {/* Image Thumbnails */}
 
-          {product?.images.length > 1 && (
+          {product?.images?.length > 1 && (
             <div className="grid grid-cols-4 gap-3">
               {product?.images
                 .slice(0, 4)
@@ -173,7 +193,6 @@ function App() {
           <div className="flex gap-3 mt-8 pt-6 border-t border-border">
             <Link
               href={`/products/${product?.slug}/update`}
-              onClick={handleEdit}
               className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
             >
               <Edit2 className="w-5 h-5" />
