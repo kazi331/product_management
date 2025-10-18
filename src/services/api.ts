@@ -17,6 +17,7 @@ export const api = createApi({
   }),
   // refetchOnFocus: true,
   // refetchOnReconnect: true,
+  tagTypes: ["Product", "Products", "Category"],
 
   endpoints: ({ mutation, query }) => ({
     login: mutation({
@@ -38,18 +39,25 @@ export const api = createApi({
     }),
     getProducts: query({
       query: (queryString: string) => `products${queryString}`,
+      providesTags: ["Products"],
     }),
     getProduct: query({
       query: (id) => `products/${id}`,
+      providesTags: (result, error, id) => [{ type: "Product", id }],
     }),
     getProductCategories: query({
       query: () => `categories`,
+      providesTags: ["Category"],
     }),
     deleteProduct: mutation({
       query: (id) => ({
         url: `products/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: (result, error, id) => [
+        { type: "Product", id },
+        "Products",
+      ],
     }),
     updateProduct: mutation({
       query: (data) => ({
@@ -57,6 +65,10 @@ export const api = createApi({
         method: "PUT",
         body: data,
       }),
+      invalidatesTags: (result, error, data) => [
+        { type: "Product", id: data.id },
+        "Products",
+      ],
     }),
     createProduct: mutation({
       query: (data) => ({
@@ -64,6 +76,7 @@ export const api = createApi({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Products"],
     }),
   }),
 });
